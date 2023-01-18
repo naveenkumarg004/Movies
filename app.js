@@ -1,5 +1,6 @@
 const express = require("express");
 const app = express();
+module.exports = app;
 const { open } = require("sqlite");
 const sqlite3 = require("sqlite3");
 
@@ -34,11 +35,11 @@ app.get("/movies/", async (request, response) => {
   response.send(booksArray);
 });
 
-//POST books API  2
+//POST movie API  2
 app.post("/movies/", async (request, response) => {
   const movieDetails = request.body;
   const { directorId, movieName, leadActor } = movieDetails;
-  const addBookQuery = `
+  const addMovieQuery = `
     insert into
     movie (director_id , movie_name, lead_actor)
     values (
@@ -46,11 +47,11 @@ app.post("/movies/", async (request, response) => {
         ${movieName} ,
         ${leadActor}
         )`;
-  const dbResponse = await db.run(addBookQuery);
-  console.log("Movie Added Successfully");
+  const movieQueryResponse = await db.run(addMovieQuery);
+  console.log("Movie Successfully Added");
 });
 
-//GET book API  3
+//GET movie API  3
 app.get("/movies/:movieId", async (request, response) => {
   const { movieId } = request.params;
   const getBookQuery = `
@@ -61,7 +62,7 @@ app.get("/movies/:movieId", async (request, response) => {
   response.send(addedBookDetails);
 });
 
-//UPDATE book API  4
+//UPDATE movie API  4
 app.put("/movies/:movieId/", async (request, response) => {
   const { movieId } = request.params;
   const movieDetails = request.body;
