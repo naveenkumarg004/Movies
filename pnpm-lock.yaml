@@ -1,12 +1,14 @@
 lockfileVersion: 5.3
 
 specifiers:
+  date-fns: ^2.29.3
   express: 4.17.1
   nodemon: 2.0.7
   sqlite: 4.0.19
   sqlite3: 5.0.2
 
 dependencies:
+  date-fns: 2.29.3
   express: 4.17.1
   nodemon: 2.0.7
   sqlite: 4.0.19
@@ -346,6 +348,11 @@ packages:
       assert-plus: 1.0.0
     dev: false
     optional: true
+
+  /date-fns/2.29.3:
+    resolution: {integrity: sha512-dDCnyH2WnnKusqvZZ6+jA1O51Ibt8ZMRNkDZdyAyK4YfbDwa/cEmuztzG5pk6hqlp9aSBPYcjOlktquahGwGeA==}
+    engines: {node: '>=0.11'}
+    dev: false
 
   /debug/2.6.9:
     resolution: {integrity: sha512-bC7ElrdJaJnPbAP+1EotYvqZsb3ecl5wi6Bfi6BJTUcNowp6cvspg0jXznRTKDjm/E7AdgFBVeAPVMNcKGsHMA==}
