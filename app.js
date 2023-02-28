@@ -25,14 +25,26 @@ const startServer = async () => {
 };
 startServer();
 
+const convertDbObjectToResponseObject = (dbObject) => {
+  return {
+    movieId: dbObject.movie_id,
+    directorId: dbObject.director_id,
+    movieName: dbObject.movie_name,
+    leadActor: dbObject.lead_actor,
+  };
+};
+
 //GET books API  1
+
 app.get("/movies/", async (request, response) => {
   const getBooksQuery = `
     select *
     from movie
     order by movie_id`;
   const booksArray = await db.all(getBooksQuery);
-  response.send(booksArray);
+  response.send(
+    booksArray.map((each) => convertDbObjectToResponseObject(each))
+  );
 });
 
 //POST movie API  2
@@ -44,11 +56,11 @@ app.post("/movies/", async (request, response) => {
     movie (director_id , movie_name, lead_actor)
     values (
         ${directorId} ,
-        ${movieName} ,
+        ${movieName}  ,
         ${leadActor}
         )`;
-  const movieQueryResponse = await db.run(addMovieQuery);
-  console.log("Movie Successfully Added");
+  addMovieQueryawait = await db.run(addMovieQuery);
+  response.send("Movie Successfully Added");
 });
 
 //GET movie API  3
@@ -58,8 +70,8 @@ app.get("/movies/:movieId", async (request, response) => {
     select *
     from movie
     where movie_id = ${movieId}`;
-  const addedBookDetails = await db.get(getBookQuery);
-  response.send(addedBookDetails);
+  const addedMovieDetails = await db.get(getBookQuery);
+  response.send(convertDbObjectToResponseObject(addedMovieDetails));
 });
 
 //UPDATE movie API  4
@@ -74,7 +86,6 @@ app.put("/movies/:movieId/", async (request, response) => {
         movie_name = ${movieName} ,
         lead_actor = ${leadActor}
     where movie_id = ${movieId} `;
-
   await db.run(updateBookQuery);
   response.send("Movie Details Updated");
 });
@@ -96,7 +107,9 @@ app.get("/directors/", async (request, response) => {
     from director
     order by director_id`;
   const directorsArray = await db.all(getDirectorsQuery);
-  response.send(directorsArray);
+  response.send(
+    directorsArray.map((each) => convertDbObjectToResponseObject(each))
+  );
 });
 // GET director movies API 7
 app.get("/directors/:directorId/movies/", async (request, response) => {
@@ -106,5 +119,7 @@ app.get("/directors/:directorId/movies/", async (request, response) => {
     from movie
     where director_id = ${directorId}`;
   const directorMoviesList = await db.all(getDirectorMoviesQuery);
-  response.send(directorMoviesList);
+  response.send(
+    directorMoviesList.map((each) => convertDbObjectToResponseObject(each))
+  );
 });
