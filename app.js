@@ -1,6 +1,6 @@
 const express = require("express");
 const app = express();
-module.exports = app;
+
 const { open } = require("sqlite");
 const sqlite3 = require("sqlite3");
 
@@ -27,10 +27,7 @@ startServer();
 
 const convertDbObjectToResponseObject = (dbObject) => {
   return {
-    movieId: dbObject.movie_id,
-    directorId: dbObject.director_id,
     movieName: dbObject.movie_name,
-    leadActor: dbObject.lead_actor,
   };
 };
 
@@ -56,14 +53,22 @@ app.post("/movies/", async (request, response) => {
     movie (director_id , movie_name, lead_actor)
     values (
         ${directorId} ,
-        ${movieName}  ,
-        ${leadActor}
-        )`;
-  addMovieQueryawait = await db.run(addMovieQuery);
+        "${movieName}"  ,
+        "${leadActor}"
+        );`;
+  addMovieQueryRes = await db.run(addMovieQuery);
   response.send("Movie Successfully Added");
 });
 
 //GET movie API  3
+const api3ResponseObject = (dbObject) => {
+  return {
+    movieId: dbObject.movie_id,
+    directorId: dbObject.director_id,
+    movieName: dbObject.movie_name,
+    leadActor: dbObject.lead_actor,
+  };
+};
 app.get("/movies/:movieId", async (request, response) => {
   const { movieId } = request.params;
   const getBookQuery = `
@@ -71,7 +76,7 @@ app.get("/movies/:movieId", async (request, response) => {
     from movie
     where movie_id = ${movieId}`;
   const addedMovieDetails = await db.get(getBookQuery);
-  response.send(convertDbObjectToResponseObject(addedMovieDetails));
+  response.send(api3ResponseObject(addedMovieDetails));
 });
 
 //UPDATE movie API  4
@@ -83,8 +88,8 @@ app.put("/movies/:movieId/", async (request, response) => {
     update movie
     set 
         director_id = ${directorId} ,
-        movie_name = ${movieName} ,
-        lead_actor = ${leadActor}
+        movie_name = "${movieName}" ,
+        lead_actor = "${leadActor}"
     where movie_id = ${movieId} `;
   await db.run(updateBookQuery);
   response.send("Movie Details Updated");
@@ -101,16 +106,21 @@ app.delete("/movies/:movieId/", async (request, response) => {
   response.send("Movie Removed");
 });
 //GET director API  6
+const directorObjToResObj = (object) => {
+  return {
+    directorId: object.director_id,
+    directorName: object.director_name,
+  };
+};
 app.get("/directors/", async (request, response) => {
   const getDirectorsQuery = `
     select *
     from director
     order by director_id`;
   const directorsArray = await db.all(getDirectorsQuery);
-  response.send(
-    directorsArray.map((each) => convertDbObjectToResponseObject(each))
-  );
+  response.send(directorsArray.map((each) => directorObjToResObj(each)));
 });
+
 // GET director movies API 7
 app.get("/directors/:directorId/movies/", async (request, response) => {
   const { directorId } = request.params;
@@ -123,3 +133,4 @@ app.get("/directors/:directorId/movies/", async (request, response) => {
     directorMoviesList.map((each) => convertDbObjectToResponseObject(each))
   );
 });
+module.exports = app;
